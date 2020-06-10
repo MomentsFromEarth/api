@@ -15,3 +15,5 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 require("./router/init")(app);
 
 module.exports = app;
+
+console.log('HIIIII I AM NEW!!!!');
