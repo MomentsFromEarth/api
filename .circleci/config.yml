@@ -3,8 +3,6 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 
-version: 2.1
-
 jobs:
   api-job:
     docker:
@@ -13,8 +11,8 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Install dependencies
-        command: sudo apt-get install python-dev && sudo apt-get install python-pip && sudo pip install awscli
+          name: Install dependencies
+          command: sudo apt-get install python-dev && sudo apt-get install python-pip && sudo pip install awscli
       - run: aws --version
       - run: ./build.sh
       - deploy:
@@ -25,3 +23,11 @@ jobs:
             else
               echo "Not master branch so not deploying MFE API to AWS Lambda"
             fi
+
+
+version: 2.1
+workflows:
+  aws-workflow:
+    jobs:
+      - api-job:
+          context: aws
