@@ -8,9 +8,14 @@ version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@1.1.0
 
+workflows:
+  aws-workflow:
+    jobs:
+      - build:
+          context: aws
+
 jobs:
   build:
-    context: AWS
     docker:
       - image: 'circleci/node:latest'
     working_directory: ~/api
