@@ -10,13 +10,11 @@ orbs:
 
 jobs:
   build:
-    context: aws
+    context: AWS
     docker:
       - image: 'circleci/node:latest'
-
     working_directory: ~/api
     executor: aws-cli/default
-
     steps:
       - checkout
       # - run:
