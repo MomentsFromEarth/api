@@ -30,4 +30,4 @@ workflows:
   aws-workflow:
     jobs:
       - api-job:
-          context: aws
+          context: AWS
