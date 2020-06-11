@@ -11,11 +11,11 @@ orbs:
 workflows:
   aws-workflow:
     jobs:
-      - build:
+      - api-job:
           context: aws
 
 jobs:
-  build:
+  api-job:
     docker:
       - image: 'circleci/node:latest'
     working_directory: ~/api
