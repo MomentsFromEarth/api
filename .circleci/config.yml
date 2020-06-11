@@ -27,7 +27,7 @@ jobs:
 
 version: 2.1
 workflows:
-  aws-workflow:
+  api-workflow:
     jobs:
       - api-job:
           context: AWS
