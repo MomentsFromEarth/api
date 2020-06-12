@@ -1,19 +1,30 @@
-# Javascript Node CircleCI 2.1 configuration file
+# Golang CircleCI 2.1 configuration file
 #
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+# Check https://circleci.com/docs/2.0/language-go/ for more details
 #
 
 jobs:
   api-job:
     docker:
-      - image: 'circleci/node:latest'
+      - image: circleci/golang:1.13
+
     working_directory: ~/api
+
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          name: Install AWS CLI
           command: sudo apt-get install python-dev && sudo apt-get install python-pip && sudo pip install awscli
       - run: aws --version
+      - run:
+          name: Install AWS Go SDK
+          command: go get -u github.com/aws/aws-sdk-go && go get -u github.com/aws/aws-lambda-go/lambda
+      - run:
+          name: Install Lambda Proxy Dependencies
+          command: go get -u github.com/aws/aws-lambda-go/events && go get -u github.com/aws/aws-lambda-go/lambda && go get -u github.com/awslabs/aws-lambda-go-api-proxy/...
+      - run:
+          name: Install Gin
+          command: go get -u github.com/gin-gonic/gin
       - run: ./build.sh
       - deploy:
           name: Deploy to AWS Lambda
@@ -23,7 +34,6 @@ jobs:
             else
               echo "Not master branch so not deploying MFE API to AWS Lambda"
             fi
-
 
 version: 2.1
 workflows:

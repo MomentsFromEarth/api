@@ -1,5 +1,5 @@
-# install node modules
-npm install
+# build go binary
+GOOS=linux go build -o main
 
 # create zip for aws lambda
-zip -r -X "./api.zip" *
+zip api.zip main
