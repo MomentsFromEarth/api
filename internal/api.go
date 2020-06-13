@@ -11,7 +11,7 @@ func Init() *gin.Engine {
 	r := gin.Default()
 	r.GET("/pingmetest", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": "pingmetest",
+			"message": "pongmetest",
 		})
 	})
 	return r
