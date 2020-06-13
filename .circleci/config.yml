@@ -25,12 +25,12 @@ jobs:
       - run:
           name: Install Gin
           command: go get -u github.com/gin-gonic/gin
-      - run: ./build.sh
+      - run: ./scripts/build.sh
       - deploy:
           name: Deploy to AWS Lambda
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              ./deploy.sh
+              ./scripts/deploy.sh
             else
               echo "Not master branch so not deploying MFE API to AWS Lambda"
             fi
