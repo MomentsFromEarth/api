@@ -2,9 +2,8 @@ package main
 
 import (
 	"context"
-	"log"
 
-	api "github.com/MomentsFromEarth/api/internal"
+	app "github.com/MomentsFromEarth/api/internal"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
@@ -13,9 +12,8 @@ import (
 var ginLambda *ginadapter.GinLambda
 
 func init() {
-	log.Printf("lambda.init")
-	apiEngine := api.Init()
-	ginLambda = ginadapter.New(apiEngine)
+	appEngine := app.Init()
+	ginLambda = ginadapter.New(appEngine)
 }
 
 // Handler is the Lambda entrypoint
