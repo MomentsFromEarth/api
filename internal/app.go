@@ -9,6 +9,7 @@ import (
 // Init is the entrypoint of app package
 func Init() *gin.Engine {
 	engine := gin.Default()
+	auth.Init()
 	engine.Use(auth.Run)
 	router.Init(engine)
 	return engine

@@ -14,18 +14,23 @@ import (
 	"github.com/lestrrat-go/jwx/jwk"
 )
 
+var keySet *jwk.Set
+
 type token struct {
 	Email string `json:"email"`
 }
 
+// Init is the entrypoint of auth package
+func Init() {
+	var err error
+	keySet, err = jwk.Fetch("https://cognito-idp.us-east-1.amazonaws.com/us-east-1_k0qjPXdf5/.well-known/jwks.json")
+	if err != nil {
+		log.Printf("Failed to parse JWK: %s", err)
+	}
+}
+
 // Run is the entrypoint of auth package
 func Run(c *gin.Context) {
-	keySet, err := jwk.Fetch("https://cognito-idp.us-east-1.amazonaws.com/us-east-1_k0qjPXdf5/.well-known/jwks.json")
-	if err != nil {
-		log.Printf("failed to parse JWK: %s", err)
-		return
-	}
-
 	authToken := c.GetHeader("Authorization")
 	splitToken := strings.Split(authToken, "Bearer ")
 	authToken = splitToken[1]
