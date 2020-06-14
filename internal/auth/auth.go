@@ -2,12 +2,10 @@ package auth
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -38,11 +36,11 @@ func Run(c *gin.Context) {
 	parsed, err := jwt.Parse(authToken, func(token *jwt.Token) (interface{}, error) {
 		kid, ok := token.Header["kid"].(string)
 		if !ok {
-			return nil, errors.New("kid header not found")
+			unauthorized(c, "Token KID header not found")
 		}
 		keys := keySet.LookupKeyID(kid)
 		if len(keys) == 0 {
-			return nil, fmt.Errorf("key %v not found", kid)
+			unauthorized(c, "Token Key not found")
 		}
 
 		var raw interface{}
@@ -52,26 +50,29 @@ func Run(c *gin.Context) {
 	if err == nil && parsed.Valid {
 		if claims, ok := parsed.Claims.(jwt.MapClaims); ok {
 			err = claims.Valid()
-			if err == nil {
-				now := time.Now().Unix()
-				if claims.VerifyExpiresAt(now, true) == false {
-					abort(c, "Token expired")
-				}
-			} else {
-				abort(c, "Token contains invalid data")
+			if err != nil {
+				unauthorized(c, "Token contains invalid data")
 			}
 			j, _ := json.Marshal(claims)
 			t := token{}
 			json.Unmarshal([]byte(j), &t)
-			fmt.Println(t.Email)
+			email := t.Email
+			if empty(email) {
+				unauthorized(c, "Email not found, cannot continue")
+			}
 			c.Set("email", t.Email)
 		}
 	} else {
-		abort(c, "Invalid Token")
+		unauthorized(c, "Token invalid")
 	}
 	c.Next()
 }
 
-func abort(c *gin.Context, message string) {
+func empty(s string) bool {
+	return len(strings.TrimSpace(s)) == 0
+}
+
+func unauthorized(c *gin.Context, message string) {
+	fmt.Printf("[AuthError] %v", message)
 	c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": message})
 }
