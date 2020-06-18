@@ -9,6 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Profile is an entrypoint of controller
+func Profile(c *gin.Context) {
+	username, _ := c.Params.Get("username")
+	u, err := user.Profile(username)
+	if err != nil {
+		errResponse(c, http.StatusBadGateway, err.Error())
+	}
+	c.JSON(http.StatusOK, u)
+	c.Next()
+}
+
 // Create is an entrypoint of controller
 func Create(c *gin.Context) {
 	newUser := &models.NewUser{}
@@ -39,6 +50,9 @@ func Read(c *gin.Context) {
 
 // Update is an entrypoint of controller
 func Update(c *gin.Context) {
+
+	// todo: fetch existing user, update that one instead
+
 	updatedUser := &models.User{}
 	err := c.Bind(updatedUser)
 	if err != nil {

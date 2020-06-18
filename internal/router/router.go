@@ -7,6 +7,7 @@ import (
 
 // Init is the entrypoint of router
 func Init(e *gin.Engine) {
+	e.GET("/profile/:username", account.Profile)
 	e.POST("/account", account.Create)
 	e.GET("/account", account.Read)
 	e.PUT("/account", account.Update)
