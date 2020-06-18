@@ -5,8 +5,13 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
+var client *dynamodb.DynamoDB
+
 // Client returns AWS DynamoDB client
 func Client() *dynamodb.DynamoDB {
-	sess, _ := awsmfe.Session()
-	return dynamodb.New(sess)
+	if client == nil {
+		session := awsmfe.Session()
+		client = dynamodb.New(session)
+	}
+	return client
 }

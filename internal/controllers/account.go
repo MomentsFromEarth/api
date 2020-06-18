@@ -14,9 +14,14 @@ func Create(c *gin.Context) {
 	newUser := &models.NewUser{}
 	err := c.Bind(newUser)
 	if err != nil {
-		badRequest(c, err.Error())
+		errResponse(c, http.StatusBadRequest, err.Error())
 	}
-	u := user.Create(newUser)
+	email, _ := c.Get("email")
+	newUser.Email = email.(string)
+	u, err := user.Create(newUser)
+	if err != nil {
+		errResponse(c, http.StatusBadGateway, err.Error())
+	}
 	c.JSON(http.StatusCreated, u)
 	c.Next()
 }
@@ -24,21 +29,43 @@ func Create(c *gin.Context) {
 // Read is an entrypoint of controller
 func Read(c *gin.Context) {
 	email, _ := c.Get("email")
-	u := user.Get(email.(string))
+	u, err := user.Read(email.(string))
+	if err != nil {
+		errResponse(c, http.StatusBadGateway, err.Error())
+	}
 	c.JSON(http.StatusOK, u)
 	c.Next()
 }
 
 // Update is an entrypoint of controller
 func Update(c *gin.Context) {
+	updatedUser := &models.User{}
+	err := c.Bind(updatedUser)
+	if err != nil {
+		errResponse(c, http.StatusBadRequest, err.Error())
+	}
+	email, _ := c.Get("email")
+	updatedUser.Email = email.(string)
+	u, err := user.Update(updatedUser)
+	if err != nil {
+		errResponse(c, http.StatusBadGateway, err.Error())
+	}
+	c.JSON(http.StatusOK, u)
+	c.Next()
 }
 
 // Delete is an entrypoint of controller
 func Delete(c *gin.Context) {
-
+	email, _ := c.Get("email")
+	u, err := user.Delete(email.(string))
+	if err != nil {
+		errResponse(c, http.StatusBadGateway, err.Error())
+	}
+	c.JSON(http.StatusOK, u)
+	c.Next()
 }
 
-func badRequest(c *gin.Context, message string) {
+func errResponse(c *gin.Context, status int, message string) {
 	fmt.Printf("[AccountError] %v", message)
-	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": message})
+	c.AbortWithStatusJSON(status, gin.H{"message": message})
 }

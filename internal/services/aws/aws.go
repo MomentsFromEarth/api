@@ -6,10 +6,12 @@ import (
 )
 
 var region = "us-east-1"
+var sess *session.Session = nil
 
 // Session returns new AWS Session
-func Session() (*session.Session, error) {
-	return session.NewSession(&aws.Config{
-		Region: aws.String(region)},
-	)
+func Session() *session.Session {
+	if sess == nil {
+		sess, _ = session.NewSession(&aws.Config{Region: aws.String(region)})
+	}
+	return sess
 }
