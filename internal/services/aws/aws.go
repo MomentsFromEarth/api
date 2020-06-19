@@ -8,10 +8,15 @@ import (
 var region = "us-east-1"
 var sess *session.Session = nil
 
-// Session returns new AWS Session
+// Session returns singleton AWS Session
 func Session() *session.Session {
 	if sess == nil {
 		sess, _ = session.NewSession(&aws.Config{Region: aws.String(region)})
 	}
 	return sess
+}
+
+// CredSession returns new AWS Session
+func CredSession(key string, secret string) *session.Session {
+	return session.NewSession(&aws.Config{Region: aws.String(region)})
 }
