@@ -28,44 +28,50 @@ func Init() {
 }
 
 // Run is the entrypoint of auth package
-func Run(c *gin.Context) {
-	authToken := c.GetHeader("Authorization")
-	splitToken := strings.Split(authToken, "Bearer ")
-	authToken = splitToken[1]
-
-	parsed, err := jwt.Parse(authToken, func(token *jwt.Token) (interface{}, error) {
-		kid, ok := token.Header["kid"].(string)
-		if !ok {
-			unauthorized(c, "Token KID header not found")
-		}
-		keys := keySet.LookupKeyID(kid)
-		if len(keys) == 0 {
-			unauthorized(c, "Token Key not found")
+func Run() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authToken := c.GetHeader("Authorization")
+		if authToken == "" {
+			unauthorized(c, "Authorization header missing")
 		}
 
-		var raw interface{}
-		return raw, keys[0].Raw(&raw)
-	})
+		splitToken := strings.Split(authToken, "Bearer ")
+		authToken = splitToken[1]
 
-	if err == nil && parsed.Valid {
-		if claims, ok := parsed.Claims.(jwt.MapClaims); ok {
-			err = claims.Valid()
-			if err != nil {
-				unauthorized(c, "Token contains invalid data")
+		parsed, err := jwt.Parse(authToken, func(token *jwt.Token) (interface{}, error) {
+			kid, ok := token.Header["kid"].(string)
+			if !ok {
+				unauthorized(c, "Token KID header not found")
 			}
-			j, _ := json.Marshal(claims)
-			t := token{}
-			json.Unmarshal([]byte(j), &t)
-			email := t.Email
-			if empty(email) {
-				unauthorized(c, "Email not found, cannot continue")
+			keys := keySet.LookupKeyID(kid)
+			if len(keys) == 0 {
+				unauthorized(c, "Token Key not found")
 			}
-			c.Set("email", t.Email)
+
+			var raw interface{}
+			return raw, keys[0].Raw(&raw)
+		})
+
+		if err == nil && parsed.Valid {
+			if claims, ok := parsed.Claims.(jwt.MapClaims); ok {
+				err = claims.Valid()
+				if err != nil {
+					unauthorized(c, "Token contains invalid data")
+				}
+				j, _ := json.Marshal(claims)
+				t := token{}
+				json.Unmarshal([]byte(j), &t)
+				email := t.Email
+				if empty(email) {
+					unauthorized(c, "Email not found, cannot continue")
+				}
+				c.Set("email", t.Email)
+			}
+		} else {
+			unauthorized(c, "Token invalid")
 		}
-	} else {
-		unauthorized(c, "Token invalid")
+		c.Next()
 	}
-	c.Next()
 }
 
 func empty(s string) bool {

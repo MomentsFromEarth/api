@@ -2,6 +2,7 @@ package moment
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +24,8 @@ func Update(c *gin.Context) {
 
 // Callback is an entrypoint of controller
 func Callback(c *gin.Context) {
+	momentID, _ := c.Params.Get("moment_id")
+	c.JSON(http.StatusOK, gin.H{"echo": momentID})
 	c.Next()
 }
 

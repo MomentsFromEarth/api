@@ -10,7 +10,6 @@ import (
 func Init() *gin.Engine {
 	engine := gin.Default()
 	auth.Init()
-	engine.Use(auth.Run)
 	router.Init(engine)
 	return engine
 }
