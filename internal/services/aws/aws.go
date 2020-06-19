@@ -18,5 +18,6 @@ func Session() *session.Session {
 
 // CredSession returns new AWS Session
 func CredSession(key string, secret string) *session.Session {
-	return session.NewSession(&aws.Config{Region: aws.String(region)})
+	cSess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
+	return cSess
 }
