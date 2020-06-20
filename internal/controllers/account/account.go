@@ -15,6 +15,7 @@ func Profile(c *gin.Context) {
 	u, err := user.Profile(username)
 	if err != nil {
 		errResponse(c, http.StatusBadGateway, err.Error())
+		return
 	}
 	c.JSON(http.StatusOK, u)
 	c.Next()
@@ -26,12 +27,14 @@ func Create(c *gin.Context) {
 	err := c.Bind(newUser)
 	if err != nil {
 		errResponse(c, http.StatusBadRequest, err.Error())
+		return
 	}
 	email, _ := c.Get("email")
 	newUser.Email = email.(string)
 	u, err := user.Create(newUser)
 	if err != nil {
 		errResponse(c, http.StatusBadGateway, err.Error())
+		return
 	}
 	c.JSON(http.StatusCreated, u)
 	c.Next()
@@ -43,6 +46,7 @@ func Read(c *gin.Context) {
 	u, err := user.Read(email.(string))
 	if err != nil {
 		errResponse(c, http.StatusBadGateway, err.Error())
+		return
 	}
 	c.JSON(http.StatusOK, u)
 	c.Next()
@@ -50,19 +54,18 @@ func Read(c *gin.Context) {
 
 // Update is an entrypoint of controller
 func Update(c *gin.Context) {
-
-	// todo: fetch existing user, update that one instead
-
 	updatedUser := &models.User{}
 	err := c.Bind(updatedUser)
 	if err != nil {
 		errResponse(c, http.StatusBadRequest, err.Error())
+		return
 	}
 	email, _ := c.Get("email")
 	updatedUser.Email = email.(string)
 	u, err := user.Update(updatedUser)
 	if err != nil {
 		errResponse(c, http.StatusBadGateway, err.Error())
+		return
 	}
 	c.JSON(http.StatusOK, u)
 	c.Next()
@@ -74,6 +77,7 @@ func Delete(c *gin.Context) {
 	u, err := user.Delete(email.(string))
 	if err != nil {
 		errResponse(c, http.StatusBadGateway, err.Error())
+		return
 	}
 	c.JSON(http.StatusOK, u)
 	c.Next()

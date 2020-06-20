@@ -15,10 +15,12 @@ func Create(c *gin.Context) {
 	err := c.Bind(newTag)
 	if err != nil {
 		errResponse(c, http.StatusBadRequest, err.Error())
+		return
 	}
 	tag, err := tag.Create(newTag)
 	if err != nil {
 		errResponse(c, http.StatusBadGateway, err.Error())
+		return
 	}
 	c.JSON(http.StatusOK, tag)
 	c.Next()
@@ -30,6 +32,7 @@ func Read(c *gin.Context) {
 	t, err := tag.Read(tagID)
 	if err != nil {
 		errResponse(c, http.StatusBadGateway, err.Error())
+		return
 	}
 	c.JSON(http.StatusOK, t)
 	c.Next()
@@ -41,6 +44,7 @@ func Delete(c *gin.Context) {
 	t, err := tag.Delete(tagID)
 	if err != nil {
 		errResponse(c, http.StatusBadGateway, err.Error())
+		return
 	}
 	c.JSON(http.StatusOK, t)
 	c.Next()

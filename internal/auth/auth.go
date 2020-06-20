@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
@@ -25,6 +26,14 @@ func Init() {
 	if err != nil {
 		log.Printf("Failed to parse JWK: %s", err)
 	}
+}
+
+// IsValidKey is a function
+func IsValidKey(key string) bool {
+	fmt.Printf("[APIKEY] %v", os.Getenv("API_KEY"))
+	fmt.Printf("[QUERYKEY] %v", key)
+	apiKey := os.Getenv("API_KEY")
+	return apiKey == key
 }
 
 // Run is the entrypoint of auth package
