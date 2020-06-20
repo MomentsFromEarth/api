@@ -111,7 +111,7 @@ func Delete(c *gin.Context) {
 // Callback is an entrypoint of controller
 func Callback(c *gin.Context) {
 	apiKey := c.Query("api_key")
-	authorized := auth.IsValidKey(apiKey)
+	authorized := auth.Valid(apiKey)
 	if authorized != true {
 		errResponse(c, http.StatusUnauthorized, "API Key invalid")
 		return

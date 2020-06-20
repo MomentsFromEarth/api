@@ -28,10 +28,8 @@ func Init() {
 	}
 }
 
-// IsValidKey is a function
-func IsValidKey(key string) bool {
-	fmt.Printf("[APIKEY] %v", os.Getenv("API_KEY"))
-	fmt.Printf("[QUERYKEY] %v", key)
+// Valid is a function
+func Valid(key string) bool {
 	apiKey := os.Getenv("API_KEY")
 	return apiKey == key
 }
