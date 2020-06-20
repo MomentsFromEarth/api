@@ -157,12 +157,10 @@ func read(name string) (*models.Tag, error) {
 		fmt.Println(err.Error())
 		return nil, err
 	}
-
 	if len(result.Items) == 0 {
 		msg := fmt.Errorf("Tag not found: %s", n)
 		return nil, msg
 	}
-
 	res := result.Items[0]
 	tag := &models.Tag{}
 	err = dynamodbattribute.UnmarshalMap(res, &tag)
@@ -180,19 +178,37 @@ func Delete(tagID string) (*models.Tag, error) {
 		fmt.Println(err.Error())
 		return nil, err
 	}
-
-	input := &dynamodb.DeleteItemInput{
-		Key: map[string]*dynamodb.AttributeValue{
-			"mfe_key": {
-				S: aws.String(getMfeKey(tagID)),
+	tag.Count = tag.Count - 1
+	if tag.Count <= 0 {
+		input := &dynamodb.DeleteItemInput{
+			Key: map[string]*dynamodb.AttributeValue{
+				"mfe_key": {
+					S: aws.String(getMfeKey(tagID)),
+				},
 			},
-		},
-		TableName: aws.String(mfeTableName),
+			TableName: aws.String(mfeTableName),
+		}
+		_, err = dynamoClient().DeleteItem(input)
+		if err != nil {
+			fmt.Println(err.Error())
+			return nil, err
+		}
+		return tag, nil
+	} else {
+		tagInput, err := dynamodbattribute.MarshalMap(tag)
+		if err != nil {
+			fmt.Println(err.Error())
+			return nil, err
+		}
+		input := &dynamodb.PutItemInput{
+			Item:      tagInput,
+			TableName: aws.String(mfeTableName),
+		}
+		_, err = dynamoClient().PutItem(input)
+		if err != nil {
+			fmt.Println(err.Error())
+			return nil, err
+		}
+		return tag, nil
 	}
-	_, err = dynamoClient().DeleteItem(input)
-	if err != nil {
-		fmt.Println(err.Error())
-		return nil, err
-	}
-	return tag, nil
 }
