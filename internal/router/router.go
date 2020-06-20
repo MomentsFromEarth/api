@@ -14,7 +14,7 @@ func Init(e *gin.Engine) {
 	a := e.Group("/")
 	a.Use(auth.Run())
 	{
-		a.POST("/tag/:tag_id", tag.Create)
+		a.POST("/tag", tag.Create)
 		a.GET("/tag/:tag_id", tag.Read)
 		a.DELETE("/tag/:tag_id", tag.Delete)
 

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/MomentsFromEarth/api/internal/models"
+	models "github.com/MomentsFromEarth/api/internal/models/user"
 	dynamodbmfe "github.com/MomentsFromEarth/api/internal/services/dynamodb"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"

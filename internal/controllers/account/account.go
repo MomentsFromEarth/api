@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/MomentsFromEarth/api/internal/models"
+	models "github.com/MomentsFromEarth/api/internal/models/user"
 	"github.com/MomentsFromEarth/api/internal/services/user"
 	"github.com/gin-gonic/gin"
 )
