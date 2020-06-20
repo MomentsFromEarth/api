@@ -75,40 +75,6 @@ func formatUserNameQueryInput(username string) *dynamodb.QueryInput {
 	}
 }
 
-func mapProfileToUser(profileUser *models.ProfileUser) *models.User {
-	return &models.User{
-		MFEKey:          profileUser.MFEKey,
-		Email:           profileUser.Email,
-		UserID:          profileUser.UserID,
-		UserName:        profileUser.UserName,
-		Avatar:          profileUser.Avatar,
-		CognitoSub:      profileUser.CognitoSub,
-		Created:         profileUser.Created,
-		Updated:         profileUser.Updated,
-		JoinMailingList: profileUser.JoinMailingList,
-		NewUser:         profileUser.NewUser,
-		QueryKey01:      profileUser.QueryKey01,
-		QueryKey02:      profileUser.QueryKey02,
-	}
-}
-
-func mapUserToProfile(user *models.User) *models.ProfileUser {
-	return &models.ProfileUser{
-		MFEKey:          user.MFEKey,
-		Email:           user.Email,
-		UserID:          user.UserID,
-		UserName:        user.UserName,
-		Avatar:          user.Avatar,
-		CognitoSub:      user.CognitoSub,
-		Created:         user.Created,
-		Updated:         user.Updated,
-		JoinMailingList: user.JoinMailingList,
-		NewUser:         user.NewUser,
-		QueryKey01:      user.QueryKey01,
-		QueryKey02:      user.QueryKey02,
-	}
-}
-
 func getMfeKey(userID string) string {
 	return fmt.Sprintf("usr:%s", userID)
 }
