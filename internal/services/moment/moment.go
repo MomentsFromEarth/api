@@ -1,21 +1,29 @@
 package moment
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
 
 	models "github.com/MomentsFromEarth/api/internal/models/moment"
 	dynamodbmfe "github.com/MomentsFromEarth/api/internal/services/dynamodb"
+	sqsmfe "github.com/MomentsFromEarth/api/internal/services/sqs"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/teris-io/shortid"
 )
 
 var mfeTableName = "MFE"
 var mfeQuery01 = "query_key_01"
 var mfeQuery02 = "query_key_02"
+var momentJobQueueURL = "https://sqs.us-east-1.amazonaws.com/776913033148/moments.fifo"
+
+func sqsClient() *sqs.SQS {
+	return sqsmfe.Client()
+}
 
 func dynamoClient() *dynamodb.DynamoDB {
 	return dynamodbmfe.Client()
@@ -64,6 +72,26 @@ func getStatusQueryKey(status string) string {
 	return fmt.Sprintf("mom:status:%s", strings.ToLower(status))
 }
 
+func momentJobParams(moment *models.Moment) *sqs.SendMessageInput {
+	momJSON, _ := json.Marshal(moment)
+	return &sqs.SendMessageInput{
+		MessageBody:            aws.String(string(momJSON)),
+		QueueUrl:               aws.String(momentJobQueueURL),
+		MessageGroupId:         aws.String("mfe-api"),
+		MessageDeduplicationId: aws.String(moment.QueueID),
+	}
+}
+
+func addMomentToProcessingQueue(moment *models.Moment) {
+	client := sqsClient()
+	output, err := client.SendMessage(momentJobParams(moment))
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Printf("Moment[%s] added to Processing Queue: %s", moment.MomentID, *output.MessageId)
+	}
+}
+
 // Create is a function
 func Create(newMoment *models.NewMoment) (*models.Moment, error) {
 	moment := formatNewMoment(newMoment)
@@ -81,6 +109,7 @@ func Create(newMoment *models.NewMoment) (*models.Moment, error) {
 		fmt.Println(err.Error())
 		return nil, err
 	}
+	addMomentToProcessingQueue(moment)
 	return moment, nil
 }
 
