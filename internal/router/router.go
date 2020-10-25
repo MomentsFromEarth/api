@@ -4,6 +4,7 @@ import (
 	"github.com/MomentsFromEarth/api/internal/auth"
 	account "github.com/MomentsFromEarth/api/internal/controllers/account"
 	moment "github.com/MomentsFromEarth/api/internal/controllers/moment"
+	search "github.com/MomentsFromEarth/api/internal/controllers/search"
 	tag "github.com/MomentsFromEarth/api/internal/controllers/tag"
 
 	"github.com/gin-gonic/gin"
@@ -29,5 +30,6 @@ func Init(e *gin.Engine) {
 		a.DELETE("/account", account.Delete)
 		a.GET("/account/profile/:username", account.Profile)
 	}
+	e.GET("/search", search.Query)
 	e.PUT("/moment/:moment_id/callback", moment.Callback)
 }
