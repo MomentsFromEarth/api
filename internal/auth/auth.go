@@ -72,6 +72,7 @@ func Run() gin.HandlerFunc {
 				if empty(email) {
 					unauthorized(c, "Email not found, cannot continue")
 				}
+				fmt.Printf("[AuthSuccess] %v", t.Email)
 				c.Set("email", t.Email)
 			}
 		} else {
