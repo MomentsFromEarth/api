@@ -13,7 +13,7 @@ type Moment struct {
 	QueueID     string `json:"queue_id"`
 	HostID      string `json:"host_id"`
 	Status      string `json:"status"`
-	Captured    string `json:"captured"`
+	Captured    int64  `json:"captured"`
 	Created     int64  `json:"created"`
 	Updated     int64  `json:"updated"`
 	QueryKey01  string `json:"query_key_01"`
@@ -22,7 +22,7 @@ type Moment struct {
 
 // NewMoment model
 type NewMoment struct {
-	Captured    string `json:"captured"`
+	Captured    int64  `json:"captured"`
 	Creator     string `json:"creator"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
