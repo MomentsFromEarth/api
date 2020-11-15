@@ -57,6 +57,7 @@ func formatNewMoment(newMoment *models.NewMoment) *models.Moment {
 		Status:      status,
 		QueueID:     newMoment.QueueID,
 		HostID:      "",
+		Captured:    newMoment.Captured,
 		Created:     now,
 		Updated:     now,
 		QueryKey01:  getStatusQueryKey(status),
