@@ -22,7 +22,7 @@ type token struct {
 // Init is the entrypoint of auth package
 func Init() {
 	var err error
-	keySet, err = jwk.Fetch("https://cognito-idp.us-east-1.amazonaws.com/us-east-1_s1qdi1Sqw/.well-known/jwks.json")
+	keySet, err = jwk.Fetch("https://cognito-idp.us-east-1.amazonaws.com/us-east-1_iJhXcJLvi/.well-known/jwks.json")
 	if err != nil {
 		log.Printf("Failed to parse JWK: %s", err)
 	}
