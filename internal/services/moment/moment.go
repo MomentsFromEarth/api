@@ -34,10 +34,12 @@ func genTimestamp() int64 {
 }
 
 func genMomentID() (string, error) {
+	// TODO: lookup to ensure uniqueness
 	return shortid.Generate()
 }
 
 func genUserID() (string, error) {
+	// TODO: lookup to ensure uniqueness
 	return shortid.Generate()
 }
 
@@ -55,14 +57,18 @@ func formatNewMoment(newMoment *models.NewMoment) *models.Moment {
 		Type:        newMoment.Type,
 		Size:        newMoment.Size,
 		Status:      status,
-		QueueID:     newMoment.QueueID,
+		QueueID:     getQueueID(momentID),
 		HostID:      "",
-		Captured:    newMoment.Captured,
+		Captured:    newMoment.Captured || now,
 		Created:     now,
 		Updated:     now,
 		QueryKey01:  getStatusQueryKey(status),
 		QueryKey02:  "mom",
 	}
+}
+
+func getQueueID(momentID string, fileType string) string {
+	return fmt.Sprintf("%s.$s", momentID, fileType)
 }
 
 func getMfeKey(momentID string) string {
