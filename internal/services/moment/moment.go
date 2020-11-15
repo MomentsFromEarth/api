@@ -68,7 +68,7 @@ func formatNewMoment(newMoment *models.NewMoment) *models.Moment {
 }
 
 func getQueueID(momentID string, fileType string) string {
-	return fmt.Sprintf("%s.$s", momentID, fileType)
+	return fmt.Sprintf("%s.%s", momentID, fileType)
 }
 
 func getMfeKey(momentID string) string {
